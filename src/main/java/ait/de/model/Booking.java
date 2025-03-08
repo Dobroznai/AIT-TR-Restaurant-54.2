@@ -63,7 +63,7 @@ public class Booking {
         this.status = status;
     }
 
-    /**.
+    /**
      * Custom string representation of Booking.
      *
      * @return Formatted string with booking details.
