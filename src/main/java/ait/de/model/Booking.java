@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
@@ -22,7 +23,8 @@ public class Booking {
     private final LocalDateTime startDateTime; // Booking start time
     private final LocalDateTime endDateTime; // Booking end time
     private final String customerName; // Name of the person booking
-    private final BookingStatus status; // Booking status (CONFIRMED, CANCELED)
+    private final BookingStatus status; // Booking status (CONFIRMED, CANCELED, PENDING)
+    private static DateTimeFormatter dateFormatter;
 
     /**
      * Constructor for creating a booking.
@@ -61,6 +63,7 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.customerName = customerName;
         this.status = status;
+        dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     }
 
     /**
@@ -73,8 +76,8 @@ public class Booking {
         final StringBuilder sb = new StringBuilder("Booking{");
         sb.append("id=").append(id);
         sb.append(", tableId=").append(tableId);
-        sb.append(", startDateTime=").append(startDateTime);
-        sb.append(", endDateTime=").append(endDateTime);
+        sb.append(", startDateTime=").append(startDateTime.format(dateFormatter));
+        sb.append(", endDateTime=").append(endDateTime.format(dateFormatter));
         sb.append(", customerName='").append(customerName).append('\'');
         sb.append(", status=").append(status);
         sb.append('}');

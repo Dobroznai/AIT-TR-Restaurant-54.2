@@ -8,6 +8,7 @@ import ait.de.exceptions.BookingConflictException;
 import ait.de.exceptions.BookingException;
 import ait.de.model.Booking;
 import ait.de.utilities.BookingStatus;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -18,21 +19,23 @@ import java.util.Scanner;
 /**
  * Console-based UI for managing restaurant table bookings.
  */
+@Slf4j
 public class ConsoleUI {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     private final BookingService bookingService;
-    private final Scanner scanner;
+    private final Scanner sc;
 
     public ConsoleUI(BookingService bookingService) {
         this.bookingService = bookingService;
-        this.scanner = new Scanner(System.in);
+        this.sc = new Scanner(System.in);
     }
 
     /**
      * Displays the main menu and handles user input.
      */
     public void showMenu() {
-        while (true) {
+        boolean run = true;
+        while (run) {
             System.out.println("\n==== TABLE BOOKING SYSTEM ====");
             System.out.println("1. Create a booking");
             System.out.println("2. View all bookings");
@@ -43,14 +46,8 @@ public class ConsoleUI {
             System.out.println("===============================");
             System.out.print("Choose an option: ");
 
-            int choice;
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-                continue;
-            }
 
+            byte choice = inputChoice();
             switch (choice) {
                 case 1 -> createBooking();
                 case 2 -> viewBookings();
@@ -58,10 +55,25 @@ public class ConsoleUI {
                 case 4 -> saveBookings();
                 case 5 -> loadBookings();
                 case 6 -> {
-                    System.out.println("Exiting system...");
-                    return;
+                    run = false;
+                    System.out.println("Exiting the program.");
+                    log.warn("Exiting the program.");
                 }
-                default -> System.out.println("Invalid option. Please choose a valid number.");
+                default -> {
+                    System.out.println("Invalid choice. Please try again.");
+                    log.warn("Invalid choice. Please try again.");
+                }
+            }
+        }
+        sc.close();
+    }
+
+    private byte inputChoice() {
+        while (true) {
+            try {
+                return Byte.parseByte(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number:");
             }
         }
     }
@@ -72,7 +84,7 @@ public class ConsoleUI {
     private void createBooking() {
         try {
             System.out.print("Enter Table ID (1-10): ");
-            int tableId = Integer.parseInt(scanner.nextLine());
+            int tableId = Integer.parseInt(sc.nextLine());
 
             // Check if tableId is within the allowed range (1-10)
             if (tableId < 1 || tableId > 10) {
@@ -81,13 +93,13 @@ public class ConsoleUI {
             }
 
             System.out.print("Enter Start Time (dd.MM.yyyy HH:mm): ");
-            LocalDateTime startTime = LocalDateTime.parse(scanner.nextLine(), FORMATTER);
+            LocalDateTime startTime = LocalDateTime.parse(sc.nextLine(), FORMATTER);
 
             System.out.print("Enter End Time (dd.MM.yyyy HH:mm): ");
-            LocalDateTime endTime = LocalDateTime.parse(scanner.nextLine(), FORMATTER);
+            LocalDateTime endTime = LocalDateTime.parse(sc.nextLine(), FORMATTER);
 
             System.out.print("Enter Customer Name: ");
-            String customerName = scanner.nextLine();
+            String customerName = sc.nextLine();
 
             Booking newBooking = new Booking(tableId, startTime, endTime, customerName, BookingStatus.CONFIRMED);
             bookingService.createBooking(newBooking);
@@ -122,7 +134,7 @@ public class ConsoleUI {
     private void cancelBooking() {
         try {
             System.out.print("Enter Booking ID to Cancel: ");
-            int bookingId = Integer.parseInt(scanner.nextLine());
+            int bookingId = Integer.parseInt(sc.nextLine());
 
             if (bookingService.cancelBooking(bookingId)) {
                 System.out.println("Booking successfully canceled.");
@@ -153,8 +165,7 @@ public class ConsoleUI {
             System.out.println("No bookings found in the file. You can create new bookings.");
             return;
         }
-
-        int skippedCount = 0; // Missed booking counter
+        int skippedCount = 0;
 
         for (Booking booking : loadedBookings) {
             try {
@@ -166,7 +177,7 @@ public class ConsoleUI {
                 System.out.println("Error loading booking: " + e.getMessage());
             }
         }
-        //Shows the user how many reservations could not be loaded.
+
         System.out.println("Bookings successfully loaded from file.");
         if (skippedCount > 0) {
             System.out.println("Skipped " + skippedCount + " conflicting bookings.");

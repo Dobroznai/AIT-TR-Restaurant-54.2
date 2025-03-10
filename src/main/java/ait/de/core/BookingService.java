@@ -36,6 +36,13 @@ public class BookingService {
             throw new BookingException("Table number must be between 1 and 10!");
         }
 
+        // Checking the correctness of booking dates.
+        if (newBooking.getEndDateTime().isBefore(newBooking.getStartDateTime()) ||
+                newBooking.getEndDateTime().equals(newBooking.getStartDateTime())) {
+            log.warn("Invalid booking time: Start={} End={}", newBooking.getStartDateTime(), newBooking.getEndDateTime());
+            throw new BookingException("End time must be later than start time.");
+        }
+
         if (!isValidBookingTime(newBooking)) {
             log.warn("Invalid booking time: {}", newBooking);
             throw new BookingException("Booking must end at least one hour before closing time!");

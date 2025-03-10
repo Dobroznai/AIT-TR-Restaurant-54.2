@@ -3,6 +3,8 @@ package ait.de.model;
 import lombok.Getter;
 import lombok.EqualsAndHashCode;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * Represents a restaurant table with a unique ID, capacity, and VIP status.
  */
@@ -23,6 +25,7 @@ public class Table {
         this.tableId = tableId;
         this.capacity = tableId; // Capacity is equal to tableId
         this.isVip = isVip;
+
     }
 
     /**
