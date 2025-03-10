@@ -103,25 +103,6 @@ fabric.properties
 hs_err_pid*
 replay_pid*
 
-### Maven template
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
-
-# Eclipse m2e generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
 ### JetBrains+all template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -318,24 +299,6 @@ buildNumber.properties
 
 # Android studio 3.1+ serialized cache file
 
-### MavensMate template
-#Sublime Text exclusions
-*.sublime-workspace
-*.sublime-project
-*.sublime-settings
-
-#MavensMate exclusions
-config/*
-mm.log
-
-#OPTIONAL Apex scripts exclusion
-# - Rule 1 excludes the contents of the apex-scripts folder
-# - Rule 2 adds in NAMED apex scripts
-# Together: excludes scripts run though MavensMate’s
-#  execute anonymous functionality, while keeping named scripts
-apex-scripts/*
-!apex-scripts/*.cls
-
 ### Intellij+iml template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -385,3 +348,4 @@ apex-scripts/*
 
 # Android studio 3.1+ serialized cache file
 
+.idea

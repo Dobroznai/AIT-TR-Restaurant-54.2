@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ait.de</groupId>
-    <artifactId>Restaurant_54.2</artifactId>
+    <groupId>de.project.restoran</groupId>
+    <artifactId>Restourant</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
