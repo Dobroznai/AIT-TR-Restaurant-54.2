@@ -3,6 +3,7 @@ package ait.de.model;
 import ait.de.utilities.BookingStatus;
 import lombok.Getter;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.Objects;
 /**
  * Represents a table booking in the restaurant.
  */
+@Slf4j
 @Getter
 @EqualsAndHashCode(of = {"tableId", "startDateTime", "endDateTime"})
 public class Booking {
@@ -33,8 +35,25 @@ public class Booking {
      * @throws IllegalArgumentException if the end time is before the start time.
      */
     public Booking(int tableId, LocalDateTime startDateTime, LocalDateTime endDateTime, String customerName, BookingStatus status) {
+        if (startDateTime == null) {
+            log.error("Start time is null");
+            throw new IllegalArgumentException("Start time must not be null.");
+        }
         if (endDateTime.isBefore(startDateTime)) {
+            log.error("EndDateTime {} is before StartDateTime {}", endDateTime, startDateTime);
             throw new IllegalArgumentException("End time must be after start time.");
+        }
+        if (tableId <= 0){
+            log.error("Invalid or incorrect table ID: {}", tableId);
+            throw new IllegalArgumentException("Table ID must be positive.");
+        }
+        if (customerName == null || customerName.trim().isEmpty()){
+            log.error("Customer name is null or empty.");
+            throw new IllegalArgumentException("Customer name must not be empty.");
+        }
+        if (status == null){
+            log.error("Booking status is null.");
+            throw new IllegalArgumentException("Booking status must not be null.");
         }
         this.id = nextId++;
         this.tableId = tableId;
