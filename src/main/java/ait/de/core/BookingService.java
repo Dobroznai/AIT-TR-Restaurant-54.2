@@ -31,6 +31,11 @@ public class BookingService {
      * Creates a new booking after checking for conflicts.
      */
     public void createBooking(Booking newBooking) throws BookingException {
+        if (newBooking.getTableId() < 1 || newBooking.getTableId() > 10) {
+            log.warn("Invalid table number: {}", newBooking.getTableId());
+            throw new BookingException("Table number must be between 1 and 10!");
+        }
+
         if (!isValidBookingTime(newBooking)) {
             log.warn("Invalid booking time: {}", newBooking);
             throw new BookingException("Booking must end at least one hour before closing time!");
