@@ -21,7 +21,7 @@ public class Table {
      * @param tableId  Unique table ID (1-10).
      * @param isVip    Defines whether the table is VIP.
      */
-    private Table(int tableId, boolean isVip) {
+    public Table(int tableId, boolean isVip) {
         this.tableId = tableId;
         this.capacity = tableId; // Capacity is equal to tableId
         this.isVip = isVip;
