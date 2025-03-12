@@ -29,6 +29,9 @@ public class BookingServiceTest {
     void setUp() {
         repository = new FakeBookingRepository(); // Используем фейковую реализацию
         bookingService = new BookingService(repository);
+        Booking.resetNextId();
+        repository.removeAllBookings(); // Очистка перед каждым тестом
+
     }
 
     @Test
@@ -78,6 +81,8 @@ public class BookingServiceTest {
         repository.removeAllBookings(); // Очищаем репозиторий перед тестом
         Booking booking = new Booking(1, LocalDateTime.of(2025, 3, 12, 10, 0), LocalDateTime.of(2025, 3, 12, 12, 0), "John Doe", BookingStatus.CONFIRMED);
         repository.addBooking(booking); // Добавляем бронь
+//Проверяем, что бронь действительно добавлена
+        System.out.println("All bookings after adding: " + repository.getAllBookings());
 
         // Act
         boolean result = bookingService.cancelBooking(1);
@@ -111,6 +116,56 @@ public class BookingServiceTest {
         assertEquals(2, result.size());  // Проверяем, что количество бронирований равно 2
         assertTrue(result.contains(booking1));  // Проверяем, что booking1 присутствует в списке
         assertTrue(result.contains(booking2));  // Проверяем, что booking2 присутствует в списке
+    }
+
+    @Test
+    void testCreateBookingOutsideBusinessHours() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 3, 12, 22, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 3, 12, 23, 30); // Предположим, что заведение закрывается в 23:00
+        Booking newBooking = new Booking(1, startDateTime, endDateTime, "John Doe", BookingStatus.CONFIRMED);
+
+        // Act & Assert
+        BookingException exception = assertThrows(BookingException.class, () -> bookingService.createBooking(newBooking));
+        assertEquals("Booking must end at least one hour before closing time!", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithInvalidTime() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 3, 12, 10, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 3, 12, 10, 0); // Ошибка: конец совпадает с началом
+        Booking newBooking = new Booking(1, startDateTime, endDateTime, "John Doe", BookingStatus.CONFIRMED);
+
+        // Act & Assert
+        BookingException exception = assertThrows(BookingException.class, () -> bookingService.createBooking(newBooking));
+        assertEquals("End time must be later than start time.", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithTableIdLessThanOne() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 3, 12, 10, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 3, 12, 12, 0);
+        // ID стола < 1
+        Booking newBooking = new Booking(0, startDateTime, endDateTime, "John Doe", BookingStatus.CONFIRMED);
+
+        // Act & Assert
+        BookingException exception = assertThrows(BookingException.class, () -> bookingService.createBooking(newBooking));
+        assertEquals("Table number must be between 1 and 10!", exception.getMessage());
+    }
+
+    @Test
+    void testCreateBookingWithTableIdGreaterThanTen() {
+        // Arrange
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 3, 12, 10, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 3, 12, 12, 0);
+        // ID стола > 10
+        Booking newBooking = new Booking(11, startDateTime, endDateTime, "John Doe", BookingStatus.CONFIRMED);
+
+        // Act & Assert
+        BookingException exception = assertThrows(BookingException.class, () -> bookingService.createBooking(newBooking));
+        assertEquals("Table number must be between 1 and 10!", exception.getMessage());
     }
 
     // Фейковая реализация BookingRepository
