@@ -65,7 +65,10 @@ public class Booking {
         this.status = status;
         dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     }
-
+     //Метод для сброса nextId
+    public static void resetNextId() {
+        nextId = 1;
+    }
     /**
      * Custom string representation of Booking.
      *
